@@ -37,6 +37,11 @@ Vue.use(VueRouter)
     path: '/3-2',
     name: 'Axios配置参数',
     component: () => import('../views/3-2.vue')
+  },
+  {
+    path: '/contactList',
+    name: '联系人列表',
+    component: () => import('../views/ContactList.vue')
   }
 ]
 
