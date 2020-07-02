@@ -47,14 +47,16 @@ export default {
     this.getList()
   },
   methods: {
-    getList() {
-      this.instance.get('/contactList').then(res => {
-        console.log(res);
-        this.list = res.data.data
-      }).catch( err => {
-        console.log(err)
-        Toast('请求失败，请稍后重试')
-      })
+    async getList() {
+      let res = await this.$Http.getContactList()
+      this.list = res.data
+      // this.instance.get('/contactList').then(res => {
+      //   console.log(res);
+      //   this.list = res.data.data
+      // }).catch( err => {
+      //   console.log(err)
+      //   Toast('请求失败，请稍后重试')
+      // })
     },
     onAdd() {
       this.showEdit = true
@@ -65,47 +67,65 @@ export default {
       this.isEdit = true
       this.editingContact = info
     },
-    onSave(info) {
+    async onSave(info) {
       console.log(info, 'info')
       if (this.isEdit) {
         // 编辑保存
-        this.instance.put('/contact/edit', info).then( res => {
-          if (res.data.code === 200){
-            Toast('编辑成功')
-            this.showEdit = false
-            this.getList()
-          }
-        }).catch( () => {
-          Toast('请求失败，请稍后重试')
-        })
+        let res  = await this.$Http.editContact( info )
+        if ( res.code === 200 ) {
+          Toast('编辑成功')
+          this.showEdit = false
+          this.getList()
+        }
+        // this.instance.put('/contact/edit', info).then( res => {
+        //   if (res.data.code === 200){
+        //     Toast('编辑成功')
+        //     this.showEdit = false
+        //     this.getList()
+        //   }
+        // }).catch( () => {
+        //   Toast('请求失败，请稍后重试')
+        // })
       } else {
         // 新建保存
-        this.instance.post('/contact/new/json', info).then( res => {
-          if (res.data.code === 200){
-            Toast('新建成功')
-            this.showEdit = false
-            this.getList()
-          }
-        }).catch( () => {
-          Toast('请求失败，请稍后重试')
-        })
+        let res = await this.$Http.newContactJson( info )
+        if ( res.code === 200 ) {
+          Toast('新建成功')
+          this.showEdit = false
+          this.getList()
+        }
+        // this.instance.post('/contact/new/json', info).then( res => {
+        //   if (res.data.code === 200){
+        //     Toast('新建成功')
+        //     this.showEdit = false
+        //     this.getList()
+        //   }
+        // }).catch( () => {
+        //   Toast('请求失败，请稍后重试')
+        // })
       }
     },
-    onDelete(info) {
-      this.instance.delete('/contact', {
-        params: {
-          id: info.id
-        }
-      }).then( res => {
-          if (res.data.code === 200){
-            Toast('删除成功')
-            this.showEdit = false
-            this.getList()
-          }
-        }).catch( () => {
-          Toast('请求失败，请稍后重试')
-        })
-    }
+    async onDelete(info) {
+      let res = this.$Http.deleteContact( {id: info.id} )
+      if ( res.code === 200 ){
+        Toast('删除成功')
+        this.showEdit = false
+        this.getList()
+      }
+      // this.instance.delete('/contact', {
+      //   params: {
+      //     id: info.id
+      //   }
+      // }).then( res => {
+      //     if (res.data.code === 200){
+      //       Toast('删除成功')
+      //       this.showEdit = false
+      //       this.getList()
+      //     }
+      //   }).catch( () => {
+      //     Toast('请求失败，请稍后重试')
+      //   })
+     }
   }
 }
 </script>
